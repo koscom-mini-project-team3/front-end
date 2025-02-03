@@ -4,7 +4,7 @@ export default function TopBar() {
   return (
     <>
       {/* 로고 */}
-      <div className="flex items-center justify-between py-2">
+      <div className="flex items-center justify-between py-2 px-6">
         <div className="flex items-center space-x-2">
           <a href="/" className="flex justify-center space-x-2">
             <img

@@ -4,7 +4,7 @@ export function NavigationBar({ activeTag }) {
     return (
         <nav className="border-t border-gray-200 flex items-center justify-between">
             <div className="flex justify-center w-full">
-                <a href="/deposit" className={`flex items-center px-5.5 py-3.5 hover:bg-gray-100 cursor-pointer ${activeTag === 'deposit' ? 'text-[#E5571B]' : ''}`}>
+                <a href="/deposit" className={`flex items-center px-5.5 py-3.5 hover:bg-gray-100 cursor-pointer ${activeTag === 'deposit' ? 'text-[#E5571B] font-bold' : ''}`}>
                     예금
                 </a>
                 <a href="#" className={`flex items-center px-5.5 py-3.5 hover:bg-gray-100 cursor-pointer ${activeTag === 'savings' ? 'text-[#E5571B]' : ''}`}>
