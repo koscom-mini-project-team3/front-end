@@ -8,10 +8,10 @@ export function HomeBanner() {
   const totalSlides = 4
 
   const bannerImages = [
-    "/src/assets/banner-ads-1.png",
-    "/src/assets/banner-ads-2.png",
-    "/src/assets/banner-ads-3.jpg",
-    "/src/assets/banner-ads-4.png",
+    "/images/banner-ads-1.png",
+    "/images/banner-ads-2.png",
+    "/images/banner-ads-3.jpg",
+    "/images/banner-ads-4.png",
   ]
 
   return (

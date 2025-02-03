@@ -6,7 +6,7 @@ const specialDeposits = [
   {
     id: 1,
     image:
-      "/src/assets/BK_SH_Profile.png",
+      "/images/BK_SH_Profile.png",
     name: "Sh첫만남우대예금",
     company: "SH수협은행",
     maxInterestRate: "1.5",
@@ -15,7 +15,7 @@ const specialDeposits = [
   {
     id: 2,
     image:
-      "/src/assets/BK_SH_Profile.png",
+      "/images/BK_SH_Profile.png",
     name: "(25년 새해출발) 특판 예금",
     company: "전북은행",
     maxInterestRate: "1.5",
@@ -24,7 +24,7 @@ const specialDeposits = [
   {
     id: 3,
     image:
-      "/src/assets/BK_BUSAN_Profile.png",
+      "/images/BK_BUSAN_Profile.png",
     name: "더(THE) 특판 정기예금",
     company: "부산은행",
     maxInterestRate: "1.5",
@@ -33,7 +33,7 @@ const specialDeposits = [
   {
     id: 4,
     image:
-      "/src/assets/BK_IBK_Profile.png",
+      "/images/BK_IBK_Profile.png",
     name: "처음 만나는 IBK중금채 (단기중금채)",
     company: "IBK기업은행",
     maxInterestRate: "1.5",
@@ -42,7 +42,7 @@ const specialDeposits = [
   {
     id: 5,
     image:
-      "/src/assets/BK_IBK_Profile.png",
+      "/images/BK_IBK_Profile.png",
     name: "처음 만나는 IBK중금채 (복리맞춤채권)",
     company: "IBK기업은행",
     maxInterestRate: "1.5",
@@ -51,7 +51,7 @@ const specialDeposits = [
   {
     id: 6,
     image:
-      "/src/assets/BK_JEONBUK_Profile.png",
+      "/images/BK_JEONBUK_Profile.png",
     name: "KIA타이거즈 우승기뭔 예금",
     company: "광주은행",
     maxInterestRate: "1.5",
@@ -63,7 +63,7 @@ const aiETFs = [
   {
     id: 1,
     image:
-      "/src/assets/samsung-asset-logo.png",
+      "/images/samsung-asset-logo.png",
     name: "KODEX 미국AI전력핵심인프라",
     company: "삼성자산운용",
     maxInterestRate: "1.92",
@@ -72,7 +72,7 @@ const aiETFs = [
   {
     id: 2,
     image:
-      "/src/assets/kiwoom-asset-logo.png",
+      "/images/kiwoom-asset-logo.png",
     name: "KIWOOM 글로벌전력반도체",
     company: "키움투자자산운용",
     maxInterestRate: "0.44",

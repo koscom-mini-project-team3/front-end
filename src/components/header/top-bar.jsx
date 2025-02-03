@@ -1,6 +1,4 @@
 import { Search } from "lucide-react"
-import koscomLogo from "../../assets/koscom-logo.png";
-import samsungAssetLogo from "../../assets/samsung-asset-logo.png";
 
 export default function TopBar() {
   return (
@@ -10,7 +8,7 @@ export default function TopBar() {
         <div className="flex items-center space-x-2">
           <a href="/" className="flex justify-center space-x-2">
             <img
-              src={koscomLogo}
+              src="/images/koscom-logo.png"
               alt="Card icon"
               className="h-6"
             />
@@ -44,7 +42,7 @@ export default function TopBar() {
               AI시대의 발전, 전력과 인프라에 달렸다.
             </div>
           </div>
-          <img src={samsungAssetLogo} alt="Kodex logo" className="h-7.5" />
+          <img src="/images/samsung-asset-logo.png" alt="Kodex logo" className="h-7.5" />
         </div>
       </div>
     </>
