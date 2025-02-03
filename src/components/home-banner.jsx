@@ -8,10 +8,10 @@ export function HomeBanner() {
   const totalSlides = 4
 
   const bannerImages = [
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA%202025-02-02%2018.22.03-NYH5IwehHMwInBEkWgA1uMXGfErOvo.png",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7vH9zaVkl7kx-SP_DT1el4gtxEPqo4UfjMg&s",
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA%202025-02-02%2018.22.03-NYH5IwehHMwInBEkWgA1uMXGfErOvo.png",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7vH9zaVkl7kx-SP_DT1el4gtxEPqo4UfjMg&s",
+    "/src/assets/banner-ads-1.png",
+    "/src/assets/banner-ads-2.png",
+    "/src/assets/banner-ads-3.jpg",
+    "/src/assets/banner-ads-4.png",
   ]
 
   return (
@@ -35,7 +35,7 @@ export function HomeBanner() {
                   key={index}
                   src={image}
                   alt={`Banner Ad ${index + 1}`}
-                  className="h-60 w-full object-contain flex-shrink-0"
+                  className="h-60 w-full p-5 object-contain flex-shrink-0"
                 />
               ))}
             </div>
