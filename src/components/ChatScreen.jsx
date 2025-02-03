@@ -1,11 +1,10 @@
 import React from 'react';
 import { Send, X, MoreVertical, Trash2 } from "lucide-react";
+import { SERVER_DOMAIN } from "../config/constants";
 
 const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSelectedTagNames }) => {
 
     const [messages, setMessages] = React.useState([
-        { type: 'user', content: '가장 이용이 많은 상품이 뭐야?' },
-        { type: 'ai', content: 'iM주거래우대예금(첫만남고객형)이 가장 이용이 많은 상품이에요.' },
     ]);
     const [messageInput, setMessageInput] = React.useState('');
     const [showMenu, setShowMenu] = React.useState(false);
@@ -17,21 +16,89 @@ const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSe
         }
     }, []);
 
-    const sendMessage = () => {
+    const streamGptResponse = async (question) => {
+        // AI 응답 메시지 추가 (초기값 빈 문자열)
+        setMessages(prev => [...prev, { type: 'ai', content: '' }]);
+        try {
+            const response = await fetch(`${SERVER_DOMAIN}/gpt/ask-stream`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ question: question, ids: selectedTagIds })
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let done = false;
+            let aiAnswer = '';
+            let buffer = '';
+
+            while (!done) {
+                const { value, done: doneReading } = await reader.read();
+                done = doneReading;
+                if (value) {
+                    const chunk = decoder.decode(value, { stream: true });
+                    buffer += chunk;
+                    // console.log(chunk);
+
+                    // 여러 줄 처리
+                    const lines = buffer.split('\n');
+                    let processedLength = 0;
+
+                    for (const line of lines) {
+                        // data: 프리픽스 제거
+                        const answer = line.replace(/^data:/, '');
+                        // console.log(answer);
+
+                        if (answer === '[DONE]') {
+                            processedLength += line.length + 1;
+                            continue;
+                        }
+
+                        aiAnswer += answer;
+                        setMessages(prev => {
+                            const newMessages = [...prev];
+                            newMessages[newMessages.length - 1] = { type: 'ai', content: aiAnswer };
+                            localStorage.setItem('chatMessages', JSON.stringify(newMessages));
+                            return newMessages;
+                        });
+
+                        processedLength += line.length + 1;
+                    }
+
+                    // 성공적으로 처리된 부분만 buffer에서 제거
+                    console.log(buffer);
+                    buffer = buffer.slice(processedLength);
+                    console.log(buffer);
+                    console.log("--------------------------------");
+                }
+            }
+        } catch (error) {
+            console.error('Error streaming GPT answer:', error);
+            setMessages(prev => {
+                const newMessages = [...prev];
+                newMessages[newMessages.length - 1] = { type: 'ai', content: 'Error: GPT 답변 스트리밍 실패' };
+                return newMessages;
+            });
+        }
+    };
+
+    // 메시지 전송 함수
+    const sendMessage = async () => {
         if (messageInput.trim() === '') return;
 
         const formattedMessage = messageInput.trim().split('\n').join(' ');
         const updatedMessages = [...messages, { type: 'user', content: formattedMessage }];
         setMessages(updatedMessages);
         localStorage.setItem('chatMessages', JSON.stringify(updatedMessages));
-
         setMessageInput('');
-    };
 
-    const clearChatHistory = () => {
-        localStorage.removeItem('chatMessages');
-        setMessages([]);
-        setShowMenu(false);
+        await streamGptResponse(formattedMessage);
     };
 
     return (
@@ -48,7 +115,11 @@ const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSe
                     <div className="absolute top-full right-0 mt-1 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
                         <div className="py-1">
                             <button
-                                onClick={clearChatHistory}
+                                onClick={() => {
+                                    localStorage.removeItem('chatMessages');
+                                    setMessages([]);
+                                    setShowMenu(false);
+                                }}
                                 className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                             >
                                 <Trash2 className="h-4 w-4 mr-2" />
@@ -126,6 +197,8 @@ const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSe
                                 if (!window.lastSendTime || now - window.lastSendTime > 100) {
                                     window.lastSendTime = now;
                                     sendMessage();
+                                } else {
+                                    setMessageInput('');
                                 }
                             }
                         }}

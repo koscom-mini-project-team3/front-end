@@ -1,29 +1,22 @@
 import React from 'react';
-import { MessageCircle, Star } from "lucide-react"
+import { MessageCircle } from "lucide-react"
 import axios from 'axios';
-import { SERVER_DOMAIN } from '../../config/constants';
+import { SERVER_DOMAIN } from '../config/constants';
 
-const ProductScreen = ({ selectedTagIds, setSelectedTagIds, setSelectedTagNames, selectedTagNames }) => {
-    const [selectedPeriod, setSelectedPeriod] = React.useState();
-    const [selectedAmount, setSelectedAmount] = React.useState();
-    const [selectedSort, setSelectedSort] = React.useState('baseRateDesc');
-    const [products, setProducts] = React.useState([
-    ]);
+const DetailScreen = ({ selectedTagIds, setSelectedTagIds, setSelectedTagNames, selectedTagNames }) => {
+    const [product, setProduct] = React.useState([]);
+    const productId = window.location.pathname.split('/').pop(); // URL에서 productId 추출
 
     React.useEffect(() => {
-        fetchProducts();
-    }, [selectedPeriod, selectedAmount, selectedSort]);
+        fetchProduct();
+    }, []);
 
-    const fetchProducts = async () => {
+    const fetchProduct = async () => {
         try {
-            const endpoint = selectedSort === 'baseRateDesc' ? '/deposits/baserate' : '/deposits/highrate';
-            const response = await axios.get(`${SERVER_DOMAIN}${endpoint}`, {
-                params: {
-                    term: selectedPeriod,
-                    min_amount: selectedAmount
-                }
-            });
-            setProducts(response.data);
+            const response = await axios.get(`${SERVER_DOMAIN}/deposits/${productId}`);
+            console.log(response.data);
+            setProduct(response.data);
+
         } catch (error) {
             console.error('상품 데이터를 불러오는데 실패했습니다:', error);
         }
@@ -82,15 +75,16 @@ const ProductScreen = ({ selectedTagIds, setSelectedTagIds, setSelectedTagNames,
 
             {/* Product List */}
             <div className="space-y-4">
-                {products.map((product) => (
-                    <div key={product.id} className="rounded-lg border border-gray-200 bg-white p-6 hover:border-gray-400 cursor-pointer" onClick={() => window.location.href = `/deposit/${product.id}`}>
-                        <div className="flex items-center justify-between">
+                {product.map((product) => (
+                    <div key={product.id} className="rounded-lg border border-gray-200 bg-white p-6 hover:border-gray-400 cursor-pointer">
+                        <div className="flex items-center justify-between" onClick={() => window.location.href = `/deposit/${product.id}`}>
                             <div className="flex items-center gap-4">
                                 {/* 비교 대상 추가 버튼 */}
                                 <div className="flex gap-2">
                                     <button
                                         className="flex h-12 w-12 items-center justify-center rounded-full bg-[#fff2eb] text-[#ff4013] hover:bg-[#ffe4d6] transition-all hover:scale-110 active:scale-90"
-                                        onClick={() => {
+                                        onClick={(e) => {
+                                            e.stopPropagation();
                                             if (!selectedTagIds.includes(product.id)) {
                                                 setSelectedTagIds([...selectedTagIds, product.id]);
                                                 setSelectedTagNames([...selectedTagNames, product.productName]);
@@ -135,4 +129,4 @@ const ProductScreen = ({ selectedTagIds, setSelectedTagIds, setSelectedTagNames,
     );
 };
 
-export default ProductScreen;
+export default DetailScreen;

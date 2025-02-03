@@ -1,7 +1,7 @@
 import React from 'react';
 import Header from '../components/header/header';
-import ProductScreen from '../components/listPage/ProductScreen';
-import ChatScreen from '../components/listPage/ChatScreen';
+import ListScreen from '../components/ListScreen';
+import ChatScreen from '../components/ChatScreen';
 
 function DepositListPage() {
 
@@ -13,7 +13,7 @@ function DepositListPage() {
       <Header activeTag="deposit" />
       <div className="bg-[#f8f9fa] flex h-[92%]">
         <div className="w-2/3 h-full">
-          <ProductScreen selectedTagIds={selectedTagIds} setSelectedTagIds={setSelectedTagIds} setSelectedTagNames={setSelectedTagNames} selectedTagNames={selectedTagNames} />
+          <ListScreen selectedTagIds={selectedTagIds} setSelectedTagIds={setSelectedTagIds} setSelectedTagNames={setSelectedTagNames} selectedTagNames={selectedTagNames} />
         </div>
         <div className="w-1/3 h-full">
           <ChatScreen selectedTagIds={selectedTagIds} setSelectedTagIds={setSelectedTagIds} selectedTagNames={selectedTagNames} setSelectedTagNames={setSelectedTagNames} />
