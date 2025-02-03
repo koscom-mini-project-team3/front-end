@@ -12,7 +12,7 @@ const ProductScreen = ({ selectedTagIds, setSelectedTagIds, setSelectedTagNames,
 
     React.useEffect(() => {
         fetchProducts();
-    }, []);
+    }, [selectedPeriod, selectedAmount, selectedSort]);
 
     const fetchProducts = async () => {
         try {
@@ -40,31 +40,19 @@ const ProductScreen = ({ selectedTagIds, setSelectedTagIds, setSelectedTagNames,
                     <div className="inline-flex rounded-lg bg-white p-1">
                         <button
                             className={`rounded-md px-4 py-2 text-sm font-medium transition-all hover:scale-105 active:scale-95 ${selectedPeriod === 'all' ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-100'}`}
-                            onClick={() => {
-                                setSelectedPeriod('');
-                                fetchProducts();
-                            }}
+                            onClick={() => { setSelectedPeriod(''); }}
                         >전체</button>
                         <button
                             className={`rounded-md px-4 py-2 text-sm font-medium transition-all hover:scale-105 active:scale-95 ${selectedPeriod === '6month' ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-100'}`}
-                            onClick={() => {
-                                setSelectedPeriod(6);
-                                fetchProducts();
-                            }}
+                            onClick={() => { setSelectedPeriod(6); }}
                         >6개월</button>
                         <button
                             className={`rounded-md px-4 py-2 text-sm font-medium transition-all hover:scale-105 active:scale-95 ${selectedPeriod === '12month' ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-100'}`}
-                            onClick={() => {
-                                setSelectedPeriod(12);
-                                fetchProducts();
-                            }}
+                            onClick={() => { setSelectedPeriod(12); }}
                         >12개월</button>
                         <button
                             className={`rounded-md px-4 py-2 text-sm font-medium transition-all hover:scale-105 active:scale-95 ${selectedPeriod === '24month' ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-100'}`}
-                            onClick={() => {
-                                setSelectedPeriod(24);
-                                fetchProducts();
-                            }}
+                            onClick={() => { setSelectedPeriod(24); }}
                         >24개월</button>
                     </div>
 
@@ -75,10 +63,7 @@ const ProductScreen = ({ selectedTagIds, setSelectedTagIds, setSelectedTagNames,
                         placeholder="금액을 입력해주세요"
                         className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
                         value={selectedAmount}
-                        onChange={(e) => {
-                            setSelectedAmount(e.target.value);
-                            fetchProducts();
-                        }}
+                        onChange={(e) => { setSelectedAmount(e.target.value); }}
                     />
                 </div>
 
@@ -87,10 +72,7 @@ const ProductScreen = ({ selectedTagIds, setSelectedTagIds, setSelectedTagNames,
                     <select
                         className="h-10 rounded-lg border border-gray-300 bg-white pl-3 pr-10 text-sm"
                         value={selectedSort}
-                        onChange={(e) => {
-                            setSelectedSort(e.target.value);
-                            fetchProducts();
-                        }}
+                        onChange={(e) => { setSelectedSort(e.target.value); }}
                     >
                         <option value="baseRateDesc">기본금리높은순</option>
                         <option value="maxRateDesc">최고금리높은순</option>
