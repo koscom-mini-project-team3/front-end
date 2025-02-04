@@ -225,7 +225,11 @@ const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSe
                                 <div className="mt-3 ml-2 mr-auto w-fit max-w-[90%]">
                                     <h4 className="font-medium text-sm text-left"
                                         dangerouslySetInnerHTML={{
-                                            __html: message.content.replace(/(?<!(<br>\s*){2})<b>/g, '<br><b>').replace(/^(\s*<br>\s*)+/, '').replace(/(?<!<br>\s*)-/g, '<br>-').replace(/(?<=<\/b>)(\s*<br>\s*){2,}/g, '</b><br>')
+                                            __html: message.content
+                                                .replace(/^(\s*<br>\s*)+/, '') // 시작점 줄바꿈br 제거
+                                                .replace(/(?<!(<br>\s*){2})<b>/g, '<br><b>') // 줄바꿈 없는 <b> 태그 제거
+                                                .replace(/(?<!<br>\s*)-/g, '<br>-') // 줄바꿈 없는 - 에 줄추가br
+                                                .replace(/(?<=<\/b>)(\s*<br>\s*){2,}/g, '</b><br>') // 타이틀 뒤 줄바꿈 제거
                                         }}>
                                     </h4>
                                 </div>

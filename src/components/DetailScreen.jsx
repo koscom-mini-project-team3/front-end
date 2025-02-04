@@ -1,5 +1,5 @@
 import React from 'react';
-import { MessageCircle } from "lucide-react"
+import { MessageCirclePlusIcon } from "lucide-react"
 import axios from 'axios';
 import { SERVER_DOMAIN } from '../config/constants';
 
@@ -84,7 +84,7 @@ const DetailScreen = ({ selectedTagIds, setSelectedTagIds, setSelectedTagNames, 
                     <div className="rounded-lg border border-gray-200 bg-white p-6">
                         <div className="space-y-10">
                             <div>
-                                <h4 className="text-lg font-semibold mb-4">상품 기본 정보</h4>
+                                <h4 className="text-2xl font-bold mb-4">상품 기본 정보</h4>
                                 <div className="space-y-1">
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">은행명</span>
@@ -190,7 +190,38 @@ const DetailScreen = ({ selectedTagIds, setSelectedTagIds, setSelectedTagNames, 
             {/* Product Document */}
             <div className="space-y-6 mt-6">
                 <div className="rounded-lg border border-gray-200 bg-white p-6">
+                    {/* 헤더 */}
+                    <div className="flex justify-between">
+                        <h4 className="text-2xl font-bold mb-4">상품 설명서</h4>
+
+                        {/* 비교 대상 추가 버튼 */}
+                        <div className="flex gap-2">
+                            <button
+                                className="flex h-12 w-12 items-center justify-center rounded-full bg-[#fff2eb] text-[#ff4013] hover:bg-[#ffe4d6] transition-all hover:scale-110 active:scale-90"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (!selectedTagIds.includes(product.id)) {
+                                        setSelectedTagIds([...selectedTagIds, product.id]);
+                                        setSelectedTagNames([...selectedTagNames, product.productName]);
+                                    }
+                                }}
+                            >
+                                <MessageCirclePlusIcon className="h-6 w-6" />
+                            </button>
+                        </div>
+                    </div>
+
+                    {product && (
+                        <div className="w-full h-[800px]">
+                            <iframe
+                                src={product.pdfUrl}
+                                title="상품 설명서"
+                                className="w-full h-full border-0"
+                            />
+                        </div>
+                    )}
                 </div>
+
             </div>
         </main >
     );
