@@ -109,34 +109,6 @@ const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSe
 
         } catch (error) {
             console.error('Error streaming GPT answer:', error);
-            setMessages(prev => {
-                const newMessages = [...prev];
-                newMessages[newMessages.length - 1] = { type: 'ai', content: 'Error: GPT 답변 스트리밍 실패' };
-                return newMessages;
-            });
-            setDisplayedMessages(prev => {
-                const newMessages = [...prev];
-                newMessages[newMessages.length - 1] = { type: 'ai', content: 'Error: GPT 답변 스트리밍 실패' };
-                return newMessages;
-            });
-
-            try {
-                const storedMessages = localStorage.getItem('chatMessages');
-                if (storedMessages) {
-                    const messagesArray = JSON.parse(storedMessages);
-                    if (messagesArray.length > 0) {
-                        const lastMessage = messagesArray[messagesArray.length - 1];
-                        if (lastMessage.type === 'ai') {
-                            messagesArray.splice(messagesArray.length - 2, 2);
-                        } else if (lastMessage.type === 'user') {
-                            messagesArray.pop();
-                        }
-                        localStorage.setItem('chatMessages', JSON.stringify(messagesArray));
-                    }
-                }
-            } catch (err) {
-                console.error('localStorage에서 마지막 user 메시지 삭제 중 에러:', err);
-            }
         }
     };
 
@@ -230,6 +202,7 @@ const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSe
                                                 .replace(/(?<!(<br>\s*){2})<b>/g, '<br><b>') // 줄바꿈 없는 <b> 태그 제거
                                                 .replace(/(?<!<br>\s*)-/g, '<br>-') // 줄바꿈 없는 - 에 줄추가br
                                                 .replace(/(?<=<\/b>)(\s*<br>\s*){2,}/g, '</b><br>') // 타이틀 뒤 줄바꿈 제거
+                                                .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>') // **글자** 를 <b>글자</b>로 변환
                                         }}>
                                     </h4>
                                 </div>
