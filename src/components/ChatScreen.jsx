@@ -192,8 +192,8 @@ const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSe
             </div>
 
             {/* 메시지 목록 패널 */}
-            <div className="flex-1 overflow-hidden scrollbar-hide">
-                <div className="h-full space-y-6 overflow-y-auto px-6 scrollbar-hide" ref={messagesPanelRef}>
+            <div className="flex-1 overflow-hidden ">
+                <div className="h-full space-y-6 overflow-y-auto px-6 " ref={messagesPanelRef}>
                     {messages.length > displayedMessages.length && (
                         <div className="flex items-center gap-4 px-2">
                             <div className="flex-1 h-px bg-gray-200"></div>

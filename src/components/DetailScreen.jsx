@@ -24,7 +24,7 @@ const DetailScreen = ({ selectedTagIds, setSelectedTagIds, setSelectedTagNames, 
 
 
     return (
-        <main className="mx-auto max-w-[1200px] px-4 py-8 overflow-y-auto max-h-[calc(100vh-100px)] scrollbar-hide">
+        <main className="mx-auto max-w-[1200px] px-4 py-8 overflow-y-auto max-h-[calc(100vh-100px)] ">
 
             {/* Product Title */}
             <div className="space-y-6">
