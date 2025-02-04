@@ -33,46 +33,46 @@ const ListScreen = ({ selectedTagIds, setSelectedTagIds, setSelectedTagNames, se
     };
 
     return (
-        <main className="mx-auto max-w-[1200px] px-4 py-8">
+        <main className="mx-auto max-w-[1200px] px-4 pt-8">
             {/* Filters */}
-            <div className="mb-6 flex items-center justify-between bg-white py-4 px-6 rounded-lg border border-gray-200 ">
-                <div className="flex items-center gap-4">
+            <div className="flex flex-col md:flex-row items-center justify-between bg-white py-2 md:py-4 px-3 md:px-6 rounded-lg border border-gray-200 mb-4 gap-2 md:gap-0">
+                <div className="flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-4 w-full md:w-auto">
                     {/* 가입기간 */}
-                    <span className="text-sm text-gray-600">가입기간</span>
-                    <div className="inline-flex rounded-lg bg-white p-1">
+                    <span className="text-[10px] md:text-xs text-gray-600 whitespace-nowrap">가입기간</span>
+                    <div className="inline-flex rounded-lg bg-white p-0.5 md:p-1 flex-wrap md:flex-nowrap">
                         <button
-                            className={`rounded-md px-4 py-2 text-sm font-medium transition-all hover:scale-105 active:scale-95 ${selectedPeriod === 'all' ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-100'}`}
+                            className={`rounded-md px-2 md:px-3 py-1 md:py-1.5 text-[10px] md:text-xs font-medium transition-all hover:scale-105 active:scale-95 ${selectedPeriod === 'all' ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-100'}`}
                             onClick={() => { setSelectedPeriod(''); }}
                         >전체</button>
                         <button
-                            className={`rounded-md px-4 py-2 text-sm font-medium transition-all hover:scale-105 active:scale-95 ${selectedPeriod === '6month' ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-100'}`}
+                            className={`rounded-md px-2 md:px-3 py-1 md:py-1.5 text-[10px] md:text-xs font-medium transition-all hover:scale-105 active:scale-95 ${selectedPeriod === '6month' ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-100'}`}
                             onClick={() => { setSelectedPeriod(6); }}
                         >6개월</button>
                         <button
-                            className={`rounded-md px-4 py-2 text-sm font-medium transition-all hover:scale-105 active:scale-95 ${selectedPeriod === '12month' ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-100'}`}
+                            className={`rounded-md px-2 md:px-3 py-1 md:py-1.5 text-[10px] md:text-xs font-medium transition-all hover:scale-105 active:scale-95 ${selectedPeriod === '12month' ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-100'}`}
                             onClick={() => { setSelectedPeriod(12); }}
                         >12개월</button>
                         <button
-                            className={`rounded-md px-4 py-2 text-sm font-medium transition-all hover:scale-105 active:scale-95 ${selectedPeriod === '24month' ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-100'}`}
+                            className={`rounded-md px-2 md:px-3 py-1 md:py-1.5 text-[10px] md:text-xs font-medium transition-all hover:scale-105 active:scale-95 ${selectedPeriod === '24month' ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-100'}`}
                             onClick={() => { setSelectedPeriod(24); }}
                         >24개월</button>
                     </div>
 
                     {/* 가입금액 */}
-                    <span className="ml-2 text-sm text-gray-600">가입금액</span>
+                    <span className="text-[10px] md:text-xs text-gray-600 whitespace-nowrap">가입금액</span>
                     <input
                         type="text"
                         placeholder="금액을 입력해주세요"
-                        className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                        className="rounded-lg border border-gray-300 px-2 py-1 md:py-1.5 text-[10px] md:text-xs w-28 md:w-32"
                         value={selectedAmount}
                         onChange={(e) => { setSelectedAmount(e.target.value); }}
                     />
                 </div>
 
                 {/* 정렬기준 */}
-                <div className="relative">
+                <div className="relative w-full md:w-auto">
                     <select
-                        className="h-10 rounded-lg border border-gray-300 bg-white pl-3 pr-10 text-sm"
+                        className="w-full md:w-auto h-7 md:h-8 rounded-lg border border-gray-300 bg-white px-2 text-[10px] md:text-xs"
                         value={selectedSort}
                         onChange={(e) => { setSelectedSort(e.target.value); }}
                     >
@@ -83,7 +83,7 @@ const ListScreen = ({ selectedTagIds, setSelectedTagIds, setSelectedTagNames, se
             </div>
 
             {/* Product List */}
-            <div className="space-y-4">
+            <div className="space-y-4 overflow-y-auto max-h-[calc(100vh-250px)] scrollbar-hide">
                 {isLoading ? (
                     <div className="flex justify-center items-center h-64">
                         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#ff4013]"></div>
