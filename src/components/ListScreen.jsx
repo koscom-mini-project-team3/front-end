@@ -21,7 +21,7 @@ const ListScreen = ({ selectedTagIds, setSelectedTagIds, setSelectedTagNames, se
             const response = await axios.get(`${SERVER_DOMAIN}${endpoint}`, {
                 params: {
                     term: selectedPeriod,
-                    min_amount: selectedAmount
+                    minAmount: selectedAmount
                 }
             });
             setProducts(response.data);
