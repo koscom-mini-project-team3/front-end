@@ -53,7 +53,6 @@ const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSe
                     for (const line of lines) {
                         // data: 프리픽스 제거
                         const answer = line.replace(/^data:/, '');
-                        // console.log(answer);
 
                         if (answer === '[DONE]') {
                             processedLength += line.length + 1;
@@ -61,6 +60,9 @@ const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSe
                         }
 
                         aiAnswer += answer;
+                        // 개행 및 마크다운 볼드 처리
+                        // aiAnswer = aiAnswer.replace(/\*\*(.*?)\*\*/g, '<br><br><b>$1</b>');
+
                         setMessages(prev => {
                             const newMessages = [...prev];
                             newMessages[newMessages.length - 1] = { type: 'ai', content: aiAnswer };
@@ -71,13 +73,10 @@ const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSe
                         processedLength += line.length + 1;
                     }
 
-                    // 성공적으로 처리된 부분만 buffer에서 제거
-                    console.log(buffer);
                     buffer = buffer.slice(processedLength);
-                    console.log(buffer);
-                    console.log("--------------------------------");
                 }
             }
+
         } catch (error) {
             console.error('Error streaming GPT answer:', error);
             setMessages(prev => {
@@ -85,6 +84,22 @@ const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSe
                 newMessages[newMessages.length - 1] = { type: 'ai', content: 'Error: GPT 답변 스트리밍 실패' };
                 return newMessages;
             });
+
+            try {
+                const storedMessages = localStorage.getItem('chatMessages');
+                if (storedMessages) {
+                    const messagesArray = JSON.parse(storedMessages);
+                    for (let i = messagesArray.length - 1; i >= 0; i--) {
+                        if (messagesArray[i].type === 'user') {
+                            messagesArray.splice(i, 1);
+                            break;
+                        }
+                    }
+                    localStorage.setItem('chatMessages', JSON.stringify(messagesArray));
+                }
+            } catch (err) {
+                console.error('localStorage에서 마지막 user 메시지 삭제 중 에러:', err);
+            }
         }
     };
 
@@ -102,9 +117,9 @@ const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSe
     };
 
     return (
-        <aside className="w-full border-l border-gray-200 bg-white p-6 flex flex-col h-full">
+        <aside className="w-full border-l border-gray-200 bg-blue-500 flex flex-col h-full">
             {/* 상단 옵션 버튼 */}
-            <div className="relative flex justify-end mb-4">
+            <div className="relative flex justify-end p-4 bg-yellow-500">
                 <button
                     onClick={() => setShowMenu(!showMenu)}
                     className="p-2 hover:bg-gray-100 rounded-full"
@@ -131,7 +146,7 @@ const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSe
             </div>
 
             {/* 메시지 목록 패널 */}
-            <div className="space-y-6">
+            <div className="space-y-6 overflow-y-auto flex-1 px-6 bg-red-500" style={{ maxHeight: 'calc(100vh - 400px)' }}>
                 {messages.map((message, index) => (
                     message.type === 'user' ? (
                         // 사용자 메시지

@@ -25,53 +25,6 @@ const DetailScreen = ({ selectedTagIds, setSelectedTagIds, setSelectedTagNames, 
 
     return (
         <main className="mx-auto max-w-[1200px] px-4 py-8">
-            {/* Filters */}
-            <div className="mb-6 flex items-center justify-between bg-white py-4 px-6 rounded-lg border border-gray-200 ">
-                <div className="flex items-center gap-4">
-                    {/* 가입기간 */}
-                    <span className="text-sm text-gray-600">가입기간</span>
-                    <div className="inline-flex rounded-lg bg-white p-1">
-                        <button
-                            className={`rounded-md px-4 py-2 text-sm font-medium transition-all hover:scale-105 active:scale-95 ${selectedPeriod === 'all' ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-100'}`}
-                            onClick={() => { setSelectedPeriod(''); }}
-                        >전체</button>
-                        <button
-                            className={`rounded-md px-4 py-2 text-sm font-medium transition-all hover:scale-105 active:scale-95 ${selectedPeriod === '6month' ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-100'}`}
-                            onClick={() => { setSelectedPeriod(6); }}
-                        >6개월</button>
-                        <button
-                            className={`rounded-md px-4 py-2 text-sm font-medium transition-all hover:scale-105 active:scale-95 ${selectedPeriod === '12month' ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-100'}`}
-                            onClick={() => { setSelectedPeriod(12); }}
-                        >12개월</button>
-                        <button
-                            className={`rounded-md px-4 py-2 text-sm font-medium transition-all hover:scale-105 active:scale-95 ${selectedPeriod === '24month' ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-100'}`}
-                            onClick={() => { setSelectedPeriod(24); }}
-                        >24개월</button>
-                    </div>
-
-                    {/* 가입금액 */}
-                    <span className="ml-2 text-sm text-gray-600">가입금액</span>
-                    <input
-                        type="text"
-                        placeholder="금액을 입력해주세요"
-                        className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                        value={selectedAmount}
-                        onChange={(e) => { setSelectedAmount(e.target.value); }}
-                    />
-                </div>
-
-                {/* 정렬기준 */}
-                <div className="relative">
-                    <select
-                        className="h-10 rounded-lg border border-gray-300 bg-white pl-3 pr-10 text-sm"
-                        value={selectedSort}
-                        onChange={(e) => { setSelectedSort(e.target.value); }}
-                    >
-                        <option value="baseRateDesc">기본금리높은순</option>
-                        <option value="maxRateDesc">최고금리높은순</option>
-                    </select>
-                </div>
-            </div>
 
             {/* Product List */}
             <div className="space-y-4">
