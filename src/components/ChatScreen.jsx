@@ -3,13 +3,12 @@ import { Send, X, MoreVertical, Trash2 } from "lucide-react";
 import { SERVER_DOMAIN } from "../config/constants";
 
 const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSelectedTagNames }) => {
-
-    const [messages, setMessages] = React.useState([
-    ]);
+    const [messages, setMessages] = React.useState([]);
+    const [displayedMessages, setDisplayedMessages] = React.useState([]);
     const [messageInput, setMessageInput] = React.useState('');
     const [showMenu, setShowMenu] = React.useState(false);
-    const messagesEndRef = React.useRef(null);
     const messagesPanelRef = React.useRef(null);
+    const MESSAGES_PER_PAGE = 6;
 
     const scrollToBottom = () => {
         if (messagesPanelRef.current) {
@@ -20,24 +19,42 @@ const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSe
     React.useEffect(() => {
         const savedMessages = localStorage.getItem('chatMessages');
         if (savedMessages) {
-            setMessages(JSON.parse(savedMessages));
+            const allMessages = JSON.parse(savedMessages);
+            setMessages(allMessages);
+            setDisplayedMessages(allMessages.slice(-MESSAGES_PER_PAGE));
+
+            allMessages.forEach(message => {
+                if (message.type === 'ai') {
+                    // console.log(message.content.replace(/^(\s*<br>\s*)+/, '').replace(/(?<!<br>\s*)-/g, '<br>-').replace(/(?<=<br>\s*)<b>/g, '<b>').replace(/(?<=<\/b>)(\s*<br>\s*){2,}/g, '<br>'));
+                }
+            })
         }
+
     }, []);
 
     React.useEffect(() => {
         scrollToBottom();
-    }, [messages]);
+    }, [displayedMessages]);
 
-    const streamGptResponse = async (question) => {
-        // AI 응답 메시지 추가 (초기값 빈 문자열)
+    const loadMoreMessages = () => {
+        const currentLength = displayedMessages.length;
+        const newMessages = messages.slice(
+            Math.max(0, messages.length - (currentLength + MESSAGES_PER_PAGE)),
+            messages.length - currentLength
+        );
+        setDisplayedMessages([...newMessages, ...displayedMessages]);
+    };
+
+    const streamGptResponse = async (question, previousChat) => {
         setMessages(prev => [...prev, { type: 'ai', content: '' }]);
+        setDisplayedMessages(prev => [...prev, { type: 'ai', content: '' }]);
         try {
             const response = await fetch(`${SERVER_DOMAIN}/gpt/ask-stream`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ question: question, ids: selectedTagIds })
+                body: JSON.stringify({ question: question, ids: selectedTagIds, previousChat: previousChat })
             });
 
             if (!response.ok) {
@@ -56,14 +73,11 @@ const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSe
                 if (value) {
                     const chunk = decoder.decode(value, { stream: true });
                     buffer += chunk;
-                    // console.log(chunk);
 
-                    // 여러 줄 처리
                     const lines = buffer.split('\n');
                     let processedLength = 0;
 
                     for (const line of lines) {
-                        // data: 프리픽스 제거
                         const answer = line.replace(/^data:/, '');
 
                         if (answer === '[DONE]') {
@@ -72,13 +86,17 @@ const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSe
                         }
 
                         aiAnswer += answer;
-                        // 개행 및 마크다운 볼드 처리
-                        // aiAnswer = aiAnswer.replace(/\*\*(.*?)\*\*/g, '<br><br><b>$1</b>');
 
                         setMessages(prev => {
                             const newMessages = [...prev];
                             newMessages[newMessages.length - 1] = { type: 'ai', content: aiAnswer };
                             localStorage.setItem('chatMessages', JSON.stringify(newMessages));
+                            return newMessages;
+                        });
+
+                        setDisplayedMessages(prev => {
+                            const newMessages = [...prev];
+                            newMessages[newMessages.length - 1] = { type: 'ai', content: aiAnswer };
                             return newMessages;
                         });
 
@@ -96,6 +114,11 @@ const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSe
                 newMessages[newMessages.length - 1] = { type: 'ai', content: 'Error: GPT 답변 스트리밍 실패' };
                 return newMessages;
             });
+            setDisplayedMessages(prev => {
+                const newMessages = [...prev];
+                newMessages[newMessages.length - 1] = { type: 'ai', content: 'Error: GPT 답변 스트리밍 실패' };
+                return newMessages;
+            });
 
             try {
                 const storedMessages = localStorage.getItem('chatMessages');
@@ -104,10 +127,8 @@ const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSe
                     if (messagesArray.length > 0) {
                         const lastMessage = messagesArray[messagesArray.length - 1];
                         if (lastMessage.type === 'ai') {
-                            // AI 메시지가 마지막이면 그 전 user 메시지도 함께 삭제
                             messagesArray.splice(messagesArray.length - 2, 2);
                         } else if (lastMessage.type === 'user') {
-                            // User 메시지가 마지막이면 해당 메시지만 삭제
                             messagesArray.pop();
                         }
                         localStorage.setItem('chatMessages', JSON.stringify(messagesArray));
@@ -119,17 +140,25 @@ const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSe
         }
     };
 
-    // 메시지 전송 함수
     const sendMessage = async () => {
         if (messageInput.trim() === '') return;
 
+        const previousMessages = messages.slice(-5).map(message => JSON.stringify({ type: message.type, content: message.content })).join('');
         const formattedMessage = messageInput.trim().split('\n').join(' ');
-        const updatedMessages = [...messages, { type: 'user', content: formattedMessage }];
-        setMessages(updatedMessages);
-        localStorage.setItem('chatMessages', JSON.stringify(updatedMessages));
+        const newMessage = { type: 'user', content: formattedMessage };
+
+        setMessages(prev => [...prev, newMessage]);
+        setDisplayedMessages(prev => {
+            if (prev.length >= MESSAGES_PER_PAGE) {
+                return [...prev.slice(1), newMessage];
+            }
+            return [...prev, newMessage];
+        });
+
+        localStorage.setItem('chatMessages', JSON.stringify([...messages, newMessage]));
         setMessageInput('');
 
-        await streamGptResponse(formattedMessage);
+        await streamGptResponse(formattedMessage, previousMessages);
     };
 
     return (
@@ -149,6 +178,7 @@ const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSe
                                 onClick={() => {
                                     localStorage.removeItem('chatMessages');
                                     setMessages([]);
+                                    setDisplayedMessages([]);
                                     setShowMenu(false);
                                 }}
                                 className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -164,14 +194,24 @@ const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSe
             {/* 메시지 목록 패널 */}
             <div className="flex-1 overflow-hidden scrollbar-hide">
                 <div className="h-full space-y-6 overflow-y-auto px-6 scrollbar-hide" ref={messagesPanelRef}>
-                    {messages.map((message, index) => (
+                    {messages.length > displayedMessages.length && (
+                        <div className="flex items-center gap-4 px-2">
+                            <div className="flex-1 h-px bg-gray-200"></div>
+                            <button
+                                onClick={loadMoreMessages}
+                                className="px-4 text-sm text-gray-600 hover:bg-gray-100 rounded-full whitespace-nowrap"
+                            >
+                                메시지 추가 로드
+                            </button>
+                            <div className="flex-1 h-px bg-gray-200"></div>
+                        </div>
+                    )}
+                    {displayedMessages.map((message, index) => (
                         message.type === 'user' ? (
-                            // 사용자 메시지
                             <div key={index} className="rounded-lg bg-[#f8f9fa] p-3 ml-auto w-fit max-w-[90%]">
                                 <h4 className="font-medium text-sm text-right">{message.content}</h4>
                             </div>
                         ) : (
-                            // AI 메시지
                             <div key={index} className="flex justify-end">
                                 <div className="flex items-start">
                                     <div className="h-11 w-11 rounded-full border border-gray-600 overflow-hidden flex items-center justify-center">
@@ -183,15 +223,9 @@ const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSe
                                     </div>
                                 </div>
                                 <div className="mt-3 ml-2 mr-auto w-fit max-w-[90%]">
-                                    {/* 2024.02.04 원문 적용 제거 */}
-                                    {/* <h4 className="font-medium text-sm text-left">
-                                        {message.content}
-                                    </h4> */}
                                     <h4 className="font-medium text-sm text-left"
                                         dangerouslySetInnerHTML={{
-                                            // 2024.02.04 임의로 가독성 향상 제거
-                                            // __html: message.content.replace(/^(<br>)+|(<br>){2,}/g, '').replace(/<br>/g, '<br><br>')
-                                            __html: message.content
+                                            __html: message.content.replace(/(?<!(<br>\s*){2})<b>/g, '<br><b>').replace(/^(\s*<br>\s*)+/, '').replace(/(?<!<br>\s*)-/g, '<br>-').replace(/(?<=<\/b>)(\s*<br>\s*){2,}/g, '</b><br>')
                                         }}>
                                     </h4>
                                 </div>
@@ -236,9 +270,8 @@ const ChatScreen = ({ selectedTagIds, setSelectedTagIds, selectedTagNames, setSe
                         onKeyDown={(e) => {
                             if (e.key === 'Enter' && !e.shiftKey) {
                                 e.preventDefault();
-                                e.stopPropagation(); // Prevent event bubbling
+                                e.stopPropagation();
 
-                                // Debounce the sendMessage call
                                 const now = Date.now();
                                 if (!window.lastSendTime || now - window.lastSendTime > 100) {
                                     window.lastSendTime = now;

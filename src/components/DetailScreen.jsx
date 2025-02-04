@@ -189,7 +189,7 @@ const DetailScreen = ({ selectedTagIds, setSelectedTagIds, setSelectedTagNames, 
 
             {/* Product Document */}
             <div className="space-y-6 mt-6">
-                <div key={product.id} className="rounded-lg border border-gray-200 bg-white p-6">
+                <div className="rounded-lg border border-gray-200 bg-white p-6">
                 </div>
             </div>
         </main >
